@@ -1,0 +1,6 @@
+#!/bin/sh
+module="wdt"
+device="wdt"
+
+# invoke rmmod with all arguments we got
+/sbin/modprobe -r $module
