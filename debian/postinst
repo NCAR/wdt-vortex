@@ -1,0 +1,42 @@
+#!/bin/sh
+set -e
+
+# set -x
+
+case "$1" in
+    configure)
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+if [ "$1" = "configure" ]; then
+
+    vortex=false
+    grep -F "model name" /proc/cpuinfo | grep -F -q Vortex && vortex=true
+
+    # clean out hand edits
+    #  cf=/etc/modprobe.d/nidas.conf
+    #  sed -i -r -e '/options wdt/d' $cf
+
+    #  cf=/etc/modules-load.d/ads.conf
+    #  sed -i -r -e '/wdt/d' $cf
+
+    # comment wdt lines in /etc/rc.local
+    cf=/etc/rc.local
+    # sed -i -r -e 's,^(sh /etc/load_cti.sh),# \1,' -e 's,^(sh /etc/rc.serial),# \1,' $cf
+
+    # start driver module
+    #  lsmod | fgrep -q wdt_vortex || modprobe wdt_vortex
+
+fi
+
+#DEBHELPER#
+
+exit 0

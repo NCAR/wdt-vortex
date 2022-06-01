@@ -13,15 +13,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <poll.h>
 
 #include "wdt.h"
 
-void init_keyboard(void);
-void close_keyboard(void);
-int kbhit(void);
-int readch(void);
+// void init_keyboard(void);
+// void close_keyboard(void);
+// int kbhit(void);
+// int readch(void);
+//
+int read_wdt(void);
+int write_wdt(int);
+int set_wdt_sec(void);
+int set_wdt_min(void);
+int check_handle(void);
 
-main(int argc, char *argv[])
+struct pollfd poll_fds[1];
+
+int kbhit()
+{
+	int ret;
+	if ((ret = poll(poll_fds, 1, 0)) < 0 ||
+			poll_fds[0].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+	    fprintf(stderr, "poll of stdin failed\n");
+	    exit(1);
+	}
+	return ret;
+}
+
+int readch() {
+	char c;
+	if (read(0, &c, 1) < 0) {
+	    fprintf(stderr, "read of stdin failed\n");
+	    exit(1);
+	}
+	return c;
+}
+
+int main(int argc, char *argv[])
 {
 	int timeout, key;
 
@@ -43,11 +72,14 @@ main(int argc, char *argv[])
 		timeout = atoi(argv[1]);
 		printf("  Settings: %d %s\n", timeout, argv[2]);
 		printf("  Hit any key to start program\n");
-		init_keyboard();
+		// init_keyboard();
 	}
 
+	poll_fds[0].fd = 0;
+	poll_fds[0].events = POLLIN;
+
 	// wait for keystroke
-	while (!kbhit()) ;
+	while (!kbhit()) sleep(1);
 	readch();
 
 	// configure wdt
@@ -68,7 +100,7 @@ main(int argc, char *argv[])
 			if (key == 'q')	// exit
 			{
 				write_wdt(0);	// disable wdt
-				close_keyboard();
+				// close_keyboard();
 				exit(0);
 			}
 			else	// reset wdt
@@ -78,3 +110,4 @@ main(int argc, char *argv[])
 		usleep(1000000);	// wait 1 sec
 	}
 }
+

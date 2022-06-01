@@ -1,0 +1,11 @@
+wdt_test
+*.ko
+*.ko.cmd
+*.o.cmd
+*.o.d
+*.mod.c
+*.ur-safe
+Module.symvers
+modules.order
+.tmp_versions
+.cache.mk

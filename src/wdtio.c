@@ -31,6 +31,40 @@ char *device_id={"/dev/wdt"};
 //
 //------------------------------------------------------------------------
 //
+// check_handle - Checks that a handle to the appropriate device file
+//					exists. If it does not a file open is performed.
+//
+// Description:
+//
+// Arguments:
+//			chip_number	The 1 based index of the chip
+//
+// Returns:
+//			0		if handle is valid
+//			-1		If the chip does not exist or it's handle is invalid
+//
+//------------------------------------------------------------------------
+//
+int check_handle(void)
+{
+    if(handle > 0)	// If it's already a valid handle
+		return 0;
+
+    if(handle == -1)	// If it's already been tried
+		return -1;
+
+	// Try opening the device file, in case it hasn't been opened yet
+    handle = open(device_id, O_RDWR);
+
+    if(handle > 0)	// If it's now a valid open handle
+		return 0;
+    
+    handle = -1;
+		return -1;
+}
+//
+//------------------------------------------------------------------------
+//
 // read_wdt - Read the watchdog timer
 //
 // Description:		This function will read the address 0x566 and return
@@ -141,37 +175,3 @@ int set_wdt_min(void)
     return c;
 }
 
-//
-//------------------------------------------------------------------------
-//
-// check_handle - Checks that a handle to the appropriate device file
-//					exists. If it does not a file open is performed.
-//
-// Description:
-//
-// Arguments:
-//			chip_number	The 1 based index of the chip
-//
-// Returns:
-//			0		if handle is valid
-//			-1		If the chip does not exist or it's handle is invalid
-//
-//------------------------------------------------------------------------
-//
-int check_handle(void)
-{
-    if(handle > 0)	// If it's already a valid handle
-		return 0;
-
-    if(handle == -1)	// If it's already been tried
-		return -1;
-
-	// Try opening the device file, in case it hasn't been opened yet
-    handle = open(device_id, O_RDWR);
-
-    if(handle > 0)	// If it's now a valid open handle
-		return 0;
-    
-    handle = -1;
-		return -1;
-}
