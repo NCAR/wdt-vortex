@@ -30,10 +30,22 @@ if [ "$1" = "configure" ]; then
 
     # comment wdt lines in /etc/rc.local
     cf=/etc/rc.local
-    # sed -i -r -e 's,^(sh /etc/load_cti.sh),# \1,' -e 's,^(sh /etc/rc.serial),# \1,' $cf
+    sed -i -r -e 's,^(sh /etc/wdt_load),# \1,' $cf
+
+    # this package includes a udev rule to set permissions on /dev/wdt_vortex
+    # According to a web post you don't have to do a
+    #   udevadmin control --reload-rules
+    # A new rule is "automatically picked up on new udev events".
 
     # start driver module
-    #  lsmod | fgrep -q wdt_vortex || modprobe wdt_vortex
+    lsmod | fgrep -q wdt_vortex || modprobe wdt_vortex
+
+    # nuke old load, unload scripts
+    cf=/etc/wdt_load
+    rm -f $cf
+
+    cf=/etc/wdt_unload
+    rm -f $cf
 
 fi
 

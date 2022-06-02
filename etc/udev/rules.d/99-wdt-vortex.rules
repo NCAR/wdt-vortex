@@ -1,0 +1,1 @@
+KERNEL=="wdt_vortex", OWNER="ads", GROUP="eol"
