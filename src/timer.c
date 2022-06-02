@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
 	{
 		printf("Test program WinSystems Watchdog Timer\n");
 		timeout = atoi(argv[1]);
-		printf("  Settings: %d %s\n", timeout, argv[2]);
-		printf("  Hit any key to start program\n");
+		printf("Settings: %d %s\n", timeout, argv[2]);
+		printf("Hit any key to start program\n");
 		init_keyboard();
 	}
 
@@ -106,6 +106,8 @@ int main(int argc, char *argv[])
 	// wait for keystroke
 	while (!kbhit()) sleep(1);
 	readch();
+
+        printf("Enter q to stop watchdog and quit\r\n");
 
 	// configure wdt
 	if (*argv[2] == 's')
@@ -118,7 +120,7 @@ int main(int argc, char *argv[])
 	while(1)
 	{
                 /* in raw mode newline is not converted to \r\n, so add \r */
-		printf("  ***** Current count = %d *****\r\n", read_wdt());
+		printf("***** Current count = %d *****\r\n", read_wdt());
 
 		if (kbhit())
 		{
@@ -129,11 +131,13 @@ int main(int argc, char *argv[])
 				// close_keyboard();
 				exit(0);
 			}
-			else	// reset wdt
-				write_wdt(timeout);
+			else {
+                            // reset wdt
+                            write_wdt(timeout);
+                        }
 		}
 
-		usleep(1000000);	// wait 1 sec
+		sleep(1);	// wait 1 sec
 	}
 }
 

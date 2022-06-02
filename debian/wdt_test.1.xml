@@ -71,7 +71,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   </refmeta>
   <refnamediv>
     <refname>&dhpackage;</refname>
-    <refpurpose>program to do test watchdog on a Vortex86DX3 SoC</refpurpose>
+    <refpurpose>program to do test the watchdog timer on a Vortex86DX3 SoC</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -82,13 +82,15 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   </refsynopsisdiv>
   <refsect1 id="description">
     <title>DESCRIPTION</title>
-      <para><command>&dhpackage;</command> is an interactive program to test
-  the watchdog timer on a Vortex.  You will be prompted to enter an
-  initial character to start the watchdog.  The watchdog counter will start
-  counting down, displaying the current value. If it reaches zero
-  the system will be rebooted.  Enter any character to reset the counter.
-  Enter 'q' or ctrl-C to quit.
-      </para>
+    <para><command>&dhpackage;</command>
+      is an interactive program to test
+      the watchdog timer on a Vortex.  You will be prompted to enter an
+      initial character to start the watchdog.  The watchdog counter will start
+      counting down, displaying the current value every second. When the
+      watchdog times out the system will be rebooted.</para>
+    <para>Enter any character to reset the watchdog.</para>
+    <para>Enter 'q' or ctrl-C to quit.</para>
+    <para>See BUGS, below for a discussion of the counter value.</para>
   </refsect1>
   <refsect1 id="options">
     <title>OPTIONS</title>
@@ -133,6 +135,6 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   <refsect1 id="bugs">
     <!-- Or use this section to tell about upstream BTS. -->
     <title>BUGS</title>
-    <para>Absolutely none.</para>
+    <para>In initial testing, with <command>wdt_test 10 s</command>, the counter value started at a value 58, dropped to 48 after a second, then stayed at 48 until the system rebooted after 11 seconds. So the behavior of the counter is a bit of a mystery, but the watchdog does cause a reboot if not woken for the specified timeout.</para>
   </refsect1>
 </refentry>
