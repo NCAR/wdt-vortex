@@ -11,5 +11,5 @@ Architecture: any
 Multi-Arch: foreign
 Depends: ${misc:Depends}
 Description: Watchdog for Vortex86DX3 SoC
- Kernel module and user test code for on-board
+ Kernel module, user test program and header file for on-board
  watchdog on a Vortex86DX3 SoC.

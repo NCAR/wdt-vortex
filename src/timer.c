@@ -117,7 +117,8 @@ int main(int argc, char *argv[])
 
 	while(1)
 	{
-		printf("  ***** Current count = %d *****\n", read_wdt());
+                /* in raw mode newline is not converted to \r\n, so add \r */
+		printf("  ***** Current count = %d *****\r\n", read_wdt());
 
 		if (kbhit())
 		{

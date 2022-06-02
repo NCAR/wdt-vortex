@@ -45,6 +45,8 @@ modules modules_install clean::
 install: wdt_test modules_install
 	install -d $(DESTDIR)$(PREFIX)/bin
 	install wdt_test $(DESTDIR)$(PREFIX)/bin
+	install -d $(DESTDIR)$(PREFIX)/include
+	install wdt.h $(DESTDIR)$(PREFIX)/include/wdt_vortex.h
 
 uninstall:
 	rm -f $(MODULE_INSTALLDIR)wdt_vortex.ko
