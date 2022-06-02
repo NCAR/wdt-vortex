@@ -1,3 +1,2 @@
 etc/modprobe.d/wdt-vortex.conf
 etc/modules-load.d/wdt-vortex.conf
-etc/udev/rules.d/99-wdt-vortex.rules

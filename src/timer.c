@@ -14,14 +14,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <poll.h>
+#include <termios.h>
 
 #include "wdt.h"
 
-// void init_keyboard(void);
-// void close_keyboard(void);
-// int kbhit(void);
-// int readch(void);
-//
 int read_wdt(void);
 int write_wdt(int);
 int set_wdt_sec(void);
@@ -29,6 +25,35 @@ int set_wdt_min(void);
 int check_handle(void);
 
 struct pollfd poll_fds[1];
+
+struct termios stdin_termios;
+
+/**
+ * Restore original termios.
+ */
+void close_keyboard(void)
+{
+    if (tcsetattr(0, TCSAFLUSH, &stdin_termios) < 0) {
+        perror("tcsetattr stdin");
+    }
+}
+
+/**
+ * Set termios to raw.
+ */
+void init_keyboard(void)
+{
+    if (tcgetattr(0, &stdin_termios) < 0) {
+        perror("tcgetattr stdin");
+    }
+    struct termios ts = stdin_termios;
+
+    cfmakeraw(&ts);
+    if (tcsetattr(0, TCSAFLUSH, &ts) < 0) {
+        perror("tcsetattr stdin");
+    }
+    atexit(close_keyboard);
+}
 
 int kbhit()
 {
@@ -57,8 +82,8 @@ int main(int argc, char *argv[])
 	// check syntax and availability
 	if (argc != 3)
 	{
-		printf("Usage: timer <time> <sec/min>\n");
-		printf("Example: timer 100 sec\n");
+		printf("Usage: %s <time> <sec|min>\n", argv[0]);
+		printf("Example: %s 100 sec\n", argv[0]);
 		exit(1);
 	}
 	else if(read_wdt() < 0)
@@ -72,7 +97,7 @@ int main(int argc, char *argv[])
 		timeout = atoi(argv[1]);
 		printf("  Settings: %d %s\n", timeout, argv[2]);
 		printf("  Hit any key to start program\n");
-		// init_keyboard();
+		init_keyboard();
 	}
 
 	poll_fds[0].fd = 0;

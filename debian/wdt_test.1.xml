@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+
+<!--
+
+See http://www.debian.org/doc/manuals/maint-guide/dother.en.html#manpagexml
+    /usr/share/doc/docbook-xsl-doc-html/doc/manpages
+
+The xsltproc binary is found in the xsltproc package. The XSL files are in
+docbook-xsl. A description of the parameters you can use can be found in the
+docbook-xsl-doc-* packages.
+
+Validation can be done using: `xmllint -''-noout -''-valid manpage.xml`
+
+General documentation about man-pages and man-page-formatting:
+man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
+
+-->
+
+  <!-- Fill in your name for FIRSTNAME and SURNAME. -->
+  <!ENTITY dhfirstname "Gordon">
+  <!ENTITY dhsurname   "Maclean">
+  <!-- dhusername could also be set to "&dhfirstname; &dhsurname;". -->
+  <!ENTITY dhusername  "Gordon Maclean">
+  <!ENTITY dhemail     "maclean@ucar.edu">
+  <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
+       allowed: see man(7), man(1) and
+       http://www.tldp.org/HOWTO/Man-Page/q2.html. -->
+  <!ENTITY dhsection   "1">
+  <!-- TITLE should be something like "User commands" or similar (see
+       http://www.tldp.org/HOWTO/Man-Page/q2.html). -->
+  <!ENTITY dhtitle     "User commands">
+  <!ENTITY dhucpackage "WDT_TEST">
+  <!ENTITY dhpackage   "wdt_test">
+]>
+
+<refentry>
+  <refentryinfo>
+    <title>&dhtitle;</title>
+    <productname>&dhpackage;</productname>
+    <authorgroup>
+      <author>
+       <firstname>&dhfirstname;</firstname>
+        <surname>&dhsurname;</surname>
+        <contrib>Wrote this manpage for the Debian system.</contrib>
+        <address>
+          <email>&dhemail;</email>
+        </address>
+      </author>
+    </authorgroup>
+    <copyright>
+      <year>2022</year>
+      <holder>&dhusername;</holder>
+    </copyright>
+    <legalnotice>
+      <para>This manual page was written for the Debian system
+        (and may be used by others).</para>
+      <para>Permission is granted to copy, distribute and/or modify this
+        document under the terms of the GNU General Public License,
+        Version 2 or (at your option) any later version published by
+        the Free Software Foundation.</para>
+      <para>On Debian systems, the complete text of the GNU General Public
+        License can be found in
+        <filename>/usr/share/common-licenses/GPL</filename>.</para>
+    </legalnotice>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>&dhucpackage;</refentrytitle>
+    <manvolnum>&dhsection;</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>&dhpackage;</refname>
+    <refpurpose>program to do test watchdog on a Vortex86DX3 SoC</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>&dhpackage;</command>
+      <arg choice="plain"><option>timeout</option></arg>
+      <arg choice="plain"><option>sec|min</option></arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1 id="description">
+    <title>DESCRIPTION</title>
+    <para>This manual page documents briefly the
+      <command>&dhpackage;</command> and <command>bar</command>
+      commands.</para>
+    <para>This manual page was written for the Debian distribution
+      because the original program does not have a manual page.
+      Instead, it has documentation in the GNU <citerefentry>
+        <refentrytitle>info</refentrytitle>
+        <manvolnum>1</manvolnum>
+      </citerefentry> format; see below.</para>
+    <para><command>&dhpackage;</command> is a program tests the on-board watchdog timer...</para>
+  </refsect1>
+  <refsect1 id="options">
+    <title>OPTIONS</title>
+    <variablelist>
+      <!-- Use the variablelist.term.separator and the
+           variablelist.term.break.after parameters to
+           control the term elements. -->
+      <varlistentry>
+        <term><option>timeout<replaceable>this</replaceable></option></term>
+        <listitem>
+          <para>Integer value for the watchdog timeout</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>sec|min</option></term>
+        <listitem>
+          <para>String, either "s" or "sec" for seconds, "m" or "min" for minutes. Default: "m".</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1 id="files">
+    <title>FILES</title>
+    <variablelist>
+      <varlistentry>
+        <term><filename>/dev/wdt_vortex</filename></term>
+        <listitem>
+            <para>The watchdog device name, created by the wdt_vortex kernel module. If the device does not exist, check that the wdt_vortex kernel module is loaded.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1 id="environment">
+    <title>ENVIRONMENT</title>
+  </refsect1>
+  <refsect1 id="bugs">
+    <!-- Or use this section to tell about upstream BTS. -->
+    <title>BUGS</title>
+    <para>Absolutely none.</para>
+  </refsect1>
+</refentry>

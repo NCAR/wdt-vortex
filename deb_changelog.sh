@@ -56,7 +56,7 @@ cat << \EOD | sed 's/...pkg...'/$pkg/ > $awkcom
         # print "version=" version ",hash=" hash
     }
 }
-/^...pkg.../ { print $0 " (" version ") stable; urgency=low" }
+/^...pkg.../ { print $0 " (" version ") bionic; urgency=low" }
 # truncate "*" line to 74 characters, 14 + max of 60 from commit subject
 /^  \*/ { out = gensub("XXXXXXX",hash,1); print substr(out,1,74);}
 /^ --/ { print $0 }

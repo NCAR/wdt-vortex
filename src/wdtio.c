@@ -26,7 +26,7 @@
 int handle = 0;
 
 // the names of our device nodes
-char *device_id={"/dev/wdt"};
+char *device_id={"/dev/wdt_vortex"};
 
 //
 //------------------------------------------------------------------------

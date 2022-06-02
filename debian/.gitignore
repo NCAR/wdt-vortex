@@ -5,4 +5,5 @@ debhelper-build-stamp
 files
 changelog
 wdt-vortex/
+wdt_test.1
 

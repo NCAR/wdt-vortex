@@ -39,8 +39,7 @@ wdtio.o: wdtio.c wdt.h Makefile
 	gcc -c wdtio.c
 
 modules modules_install clean::
-	# $(RM) -rf *.o.ur-safe *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions Module.symvers wdt_test
-	$(RM) *.o.ur-safe
+	$(RM) *.o.ur-safe wdt_test
 	@$(MAKE) -C $(KERNEL_DIR) M=$$PWD $@
 
 install: wdt_test modules_install
