@@ -43,7 +43,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
       <author>
        <firstname>&dhfirstname;</firstname>
         <surname>&dhsurname;</surname>
-        <contrib>Wrote this manpage for the Debian system.</contrib>
+        <contrib></contrib>
         <address>
           <email>&dhemail;</email>
         </address>
@@ -51,7 +51,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
     </authorgroup>
     <copyright>
       <year>2022</year>
-      <holder>&dhusername;</holder>
+      <holder>UCAR</holder>
     </copyright>
     <legalnotice>
       <para>This manual page was written for the Debian system
@@ -89,7 +89,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
       counting down, displaying the current value every second. When the
       watchdog times out the system will be rebooted.</para>
     <para>Enter any character to reset the watchdog.</para>
-    <para>Enter 'q' or ctrl-C to quit.</para>
+    <para>Enter 'q' or ctrl-C to disable the watchdog and quit.</para>
     <para>See BUGS, below for a discussion of the counter value.</para>
   </refsect1>
   <refsect1 id="options">
