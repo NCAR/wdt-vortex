@@ -15,6 +15,9 @@
 #include <unistd.h>
 #include <poll.h>
 #include <termios.h>
+#include <signal.h>
+#include <string.h>
+#include <errno.h>
 
 #include "wdt.h"
 
@@ -33,9 +36,17 @@ struct termios stdin_termios;
  */
 void close_keyboard(void)
 {
+    fprintf(stderr,"enabling canonical input\r\n");
     if (tcsetattr(0, TCSAFLUSH, &stdin_termios) < 0) {
-        perror("tcsetattr stdin");
+        fprintf(stderr, "tcsetattr stdin %s\r\n",
+                strerror(errno));
     }
+}
+
+void disable_wdt(void)
+{
+    fprintf(stderr,"disabling watchdog\r\n");
+    write_wdt(0);
 }
 
 /**
@@ -44,13 +55,19 @@ void close_keyboard(void)
 void init_keyboard(void)
 {
     if (tcgetattr(0, &stdin_termios) < 0) {
-        perror("tcgetattr stdin");
+        fprintf(stderr, "tcgetattr stdin %s\r\n",
+                strerror(errno));
     }
     struct termios ts = stdin_termios;
 
-    cfmakeraw(&ts);
+    /* turn off canonical (line oriented) input processing */
+    ts.c_lflag &= ~ICANON;
+    ts.c_cc[VMIN] = 0;
+    ts.c_cc[VTIME] = 0;
+
     if (tcsetattr(0, TCSAFLUSH, &ts) < 0) {
-        perror("tcsetattr stdin");
+        fprintf(stderr, "tcsetattr stdin %s\r\n",
+                strerror(errno));
     }
     atexit(close_keyboard);
 }
@@ -60,7 +77,7 @@ int kbhit()
 	int ret;
 	if ((ret = poll(poll_fds, 1, 0)) < 0 ||
 			poll_fds[0].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-	    fprintf(stderr, "poll of stdin failed\n");
+	    fprintf(stderr, "poll of stdin failed\r\n");
 	    exit(1);
 	}
 	return ret;
@@ -69,10 +86,16 @@ int kbhit()
 int readch() {
 	char c;
 	if (read(0, &c, 1) < 0) {
-	    fprintf(stderr, "read of stdin failed\n");
+	    fprintf(stderr, "read of stdin failed\r\n");
 	    exit(1);
 	}
 	return c;
+}
+
+void sigfunc(int sig, siginfo_t* si,void * ptr)
+{
+    fprintf(stderr,"signal %s(%d) received\r\n",  strsignal(sig), sig);
+    exit(1);
 }
 
 int main(int argc, char *argv[])
@@ -100,6 +123,18 @@ int main(int argc, char *argv[])
 		init_keyboard();
 	}
 
+        struct sigaction sigact = {
+            .sa_sigaction = sigfunc,
+            .sa_flags = SA_SIGINFO
+        };
+
+        if (sigaction(SIGINT, &sigact, NULL) < 0 ||
+                    sigaction(SIGTERM, &sigact, NULL) < 0) {
+            fprintf(stderr, "sigaction %s\r\n",
+                    strerror(errno));
+            exit(1);
+        }
+
 	poll_fds[0].fd = 0;
 	poll_fds[0].events = POLLIN;
 
@@ -116,6 +151,7 @@ int main(int argc, char *argv[])
 		set_wdt_min();
 
 	write_wdt(timeout);
+        atexit(disable_wdt);
 
 	while(1)
 	{
@@ -127,8 +163,6 @@ int main(int argc, char *argv[])
 			key = readch();
 			if (key == 'q')	// exit
 			{
-				write_wdt(0);	// disable wdt
-				// close_keyboard();
 				exit(0);
 			}
 			else {

@@ -71,7 +71,7 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   </refmeta>
   <refnamediv>
     <refname>&dhpackage;</refname>
-    <refpurpose>program to do test the watchdog timer on a Vortex86DX3 SoC</refpurpose>
+    <refpurpose>program to test the watchdog timer on a Vortex86DX3 SoC</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>
@@ -135,6 +135,6 @@ man(1), man(7), http://www.tldp.org/HOWTO/Man-Page/
   <refsect1 id="bugs">
     <!-- Or use this section to tell about upstream BTS. -->
     <title>BUGS</title>
-    <para>In initial testing, with <command>wdt_test 10 s</command>, the counter value started at a value 58, dropped to 48 after a second, then stayed at 48 until the system rebooted after 11 seconds. So the behavior of the counter is a bit of a mystery, but the watchdog does cause a reboot if not woken for the specified timeout.</para>
+    <para>The watchdog counter does not behave as expected, but the watchdog does cause a reboot if the timeout is reached. The counter value typically starts with a value of 58 or 52, then drops to 48 after a second, and remains at that value until the time expires and the system is rebooted or the wdt_test program is exited.</para>
   </refsect1>
 </refentry>
