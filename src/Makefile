@@ -54,7 +54,7 @@ uninstall:
 	/sbin/depmod -a
 
 wdt_test: timer.c wdt.h wdtio.o Makefile
-	gcc -static timer.c wdtio.o -o wdt_test
+	gcc timer.c wdtio.o -o wdt_test
 	chmod a+x wdt_test
 
 spotless:

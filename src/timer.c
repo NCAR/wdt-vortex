@@ -31,42 +31,44 @@ struct pollfd poll_fds[1];
 
 struct termios stdin_termios;
 
+extern char *device_id;
+
 /**
  * Restore original termios.
  */
 void close_keyboard(void)
 {
-    fprintf(stderr,"enabling canonical input\r\n");
+    printf("re-enabling canonical input\n");
     if (tcsetattr(0, TCSAFLUSH, &stdin_termios) < 0) {
-        fprintf(stderr, "tcsetattr stdin %s\r\n",
+        fprintf(stderr, "tcsetattr stdin %s\n",
                 strerror(errno));
     }
 }
 
 void disable_wdt(void)
 {
-    fprintf(stderr,"disabling watchdog\r\n");
+    printf("disabling watchdog\n");
     write_wdt(0);
 }
 
 /**
- * Set termios to raw.
+ * Turn off canonical, line-oriented, input, to be able to read
+ * each keystroke.
  */
 void init_keyboard(void)
 {
     if (tcgetattr(0, &stdin_termios) < 0) {
-        fprintf(stderr, "tcgetattr stdin %s\r\n",
+        fprintf(stderr, "tcgetattr stdin: %s\n",
                 strerror(errno));
     }
     struct termios ts = stdin_termios;
 
-    /* turn off canonical (line oriented) input processing */
     ts.c_lflag &= ~ICANON;
     ts.c_cc[VMIN] = 0;
     ts.c_cc[VTIME] = 0;
 
     if (tcsetattr(0, TCSAFLUSH, &ts) < 0) {
-        fprintf(stderr, "tcsetattr stdin %s\r\n",
+        fprintf(stderr, "tcsetattr stdin: %s\n",
                 strerror(errno));
     }
     atexit(close_keyboard);
@@ -75,18 +77,22 @@ void init_keyboard(void)
 int kbhit()
 {
 	int ret;
-	if ((ret = poll(poll_fds, 1, 0)) < 0 ||
-			poll_fds[0].revents & (POLLERR | POLLHUP | POLLNVAL)) {
-	    fprintf(stderr, "poll of stdin failed\r\n");
+        /* timeout=0, return immediately */
+	if ((ret = poll(poll_fds, 1, 0)) < 0) {
+	    fprintf(stderr, "stdin poll: %s\n", strerror(errno));
 	    exit(1);
 	}
+        if (poll_fds[0].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+            fprintf(stderr,"stdin poll failed\n");
+            exit(1);
+        }
 	return ret;
 }
 
 int readch() {
 	char c;
 	if (read(0, &c, 1) < 0) {
-	    fprintf(stderr, "read of stdin failed\r\n");
+	    fprintf(stderr, "stdin read: %s\n", strerror(errno));
 	    exit(1);
 	}
 	return c;
@@ -94,8 +100,8 @@ int readch() {
 
 void sigfunc(int sig, siginfo_t* si,void * ptr)
 {
-    fprintf(stderr,"signal %s(%d) received\r\n",  strsignal(sig), sig);
-    exit(1);
+        fprintf(stderr,"signal %s(%d) received\n",  strsignal(sig), sig);
+        exit(1);
 }
 
 int main(int argc, char *argv[])
@@ -105,13 +111,13 @@ int main(int argc, char *argv[])
 	// check syntax and availability
 	if (argc != 3)
 	{
-		printf("Usage: %s <time> <sec|min>\n", argv[0]);
-		printf("Example: %s 100 sec\n", argv[0]);
+		fprintf(stderr, "Usage: %s <time> <sec|min>\n", argv[0]);
+		fprintf(stderr, "Example: %s 100 sec\n", argv[0]);
 		exit(1);
 	}
 	else if(read_wdt() < 0)
 	{	
-	    fprintf(stderr, "Can't access device WDT - Aborting\n");
+	    fprintf(stderr, "%s: open/read: %s\n", device_id, strerror(errno));
 	    exit(1);
 	}
 	else
@@ -130,8 +136,7 @@ int main(int argc, char *argv[])
 
         if (sigaction(SIGINT, &sigact, NULL) < 0 ||
                     sigaction(SIGTERM, &sigact, NULL) < 0) {
-            fprintf(stderr, "sigaction %s\r\n",
-                    strerror(errno));
+            fprintf(stderr, "sigaction %s\n", strerror(errno));
             exit(1);
         }
 
@@ -142,7 +147,7 @@ int main(int argc, char *argv[])
 	while (!kbhit()) sleep(1);
 	readch();
 
-        printf("Enter q to stop watchdog and quit\r\n");
+        printf("Enter q to stop watchdog and quit\n");
 
 	// configure wdt
 	if (*argv[2] == 's')
@@ -155,8 +160,7 @@ int main(int argc, char *argv[])
 
 	while(1)
 	{
-                /* in raw mode newline is not converted to \r\n, so add \r */
-		printf("***** Current count = %d *****\r\n", read_wdt());
+		printf("***** Current count = %d *****\n", read_wdt());
 
 		if (kbhit())
 		{
